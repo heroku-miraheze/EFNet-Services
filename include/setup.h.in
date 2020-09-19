@@ -1,0 +1,81 @@
+#ifndef __SETUP_H__
+#define __SETUP_H__
+
+/*
+** $Id: setup.h.in,v 1.1.1.1 2003/02/02 16:52:24 cbehrens Exp $
+*/
+
+#ifndef _ALL_SOURCE
+#undef _ALL_SOURCE
+#endif
+
+#undef HAVE_RESTARTABLE_SYSCALLS
+#undef HAVE_POLL
+#undef RETSIGTYPE
+#undef HAVE_STRERROR
+#undef HAVE_ATTRIBUTE
+#undef SYS_ERRLIST_DECLARED
+
+/* Define if you have the <crypt.h> header file.  */
+#undef HAVE_CRYPT_H
+
+/* Define if you have the <stropts.h> header file.  */
+#undef HAVE_STROPTS_H
+
+/* Define if you have the <time.h> header file.  */
+#undef HAVE_TIME_H
+
+/* Define if you have the <sys/time.h> header file.  */
+#undef HAVE_SYS_TIME_H
+
+/* Define if you have the <sys/ioctl.h> header file.  */
+#undef HAVE_SYS_IOCTL_H
+
+/* Define if you have the <sys/filio.h> header file.  */
+#undef HAVE_SYS_FILIO_H
+
+#include <sys/types.h>
+
+#ifdef HAVE_STROPTS_H
+#include <stropts.h>
+#endif
+
+#ifdef HAVE_TIME_H
+#include <time.h>
+#endif
+
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+
+#ifdef HAVE_SYS_IOCTL_H
+#include <sys/ioctl.h>
+#endif
+
+#ifdef HAVE_SYS_FILIO_H
+#include <sys/filio.h>
+#endif
+
+#ifdef HAVE_CRYPT_H
+#include <crypt.h>
+#endif
+
+#ifndef HAVE_STRERROR
+#ifndef SYS_ERRLIST_DECLARED
+extern char     *sys_errlist[];
+extern int      sys_nerr;
+#endif
+
+#define strerror(__x)											\
+		((__x) <= 0 || (__x) >= sys_nerr) ? "Undefined Error" : \
+			sys_errlist[__x]
+
+#endif
+
+#ifdef HAVE_ATTRIBUTE
+#define RCSID(__x)  static char _rcs_id[] __attribute__((unused)) = __x
+#else
+#define RCSID(__x)  static char _unused_rcs_id[] = __x
+#endif
+
+#endif

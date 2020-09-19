@@ -1,0 +1,31 @@
+
+$Id: README,v 1.2 2004/03/30 23:21:03 cbehrens Exp $
+
+
+This is the code for a modular IRC services daemon.  It is compatable with
+current EFNet IRC servers.
+
+To build:
+
+You'll need a copy of libcsconfig-1.0 and libnnmatch-1.0.
+
+1) mkdir build-services
+2) cd build-services
+3) extract csconfig into 'csconfig-1.0' directory
+4) extract nnmatch to 'nnmatch-1.0' directory
+5) extract services source to 'services-*' directory
+6) cd csconfig-1.0 && make
+7) cd nnmatch-1.0 && make
+8) cd services-* && ./configure && make
+
+The 'services' binary will be located in the services-*/daemon dir.
+
+At some point, I'll fix 'services' to use the newest versions of 'csconfig'
+and 'nnmatch' (or equiv)...which install themselves into /usr/local/lib,
+thus making the above a little less painful.
+
+Enjoy.
+
+- Chris (cbehrens@codestud.com)
+
+

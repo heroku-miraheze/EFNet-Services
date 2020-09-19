@@ -1,0 +1,37 @@
+
+
+#
+# $Id: Makefile.in,v 1.2 2004/03/30 23:14:27 cbehrens Exp $
+#
+
+CC=gcc -Wall
+CFLAGS=-g -I. -I../chanjupedb -I../../include -I../../../csconfig-1.0 -I../../../nnmatch-1.0 -I../admin
+
+CFLAGS.mod_chanjupe.o=
+#-DSI_CHANFIX_EXTRA_DEBUG
+CFLAGS.mod_chanjupe_r.o=-D_REENTRANT
+#-DSI_CHANFIX_EXTRA_DEBUG
+
+LFLAGS=-L../mod_chanjupedb -lmod_chanjupedb
+
+ALL=mod_chanjupe.so mod_chanjupe_r.so
+
+all:	${ALL}
+
+mod_chanjupe.so:	mod_chanjupe.o
+	ld -G -o $@ mod_chanjupe.o
+
+mod_chanjupe_r.so:	mod_chanjupe_r.o
+	ld -G -o $@ mod_chanjupe_r.o
+
+mod_chanjupe.o:		mod_chanjupe.c
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ -c mod_chanjupe.c
+
+mod_chanjupe_r.o:		mod_chanjupe.c
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ -c mod_chanjupe.c
+
+clean:
+	rm -f *.o *.a ${ALL}
+
+distclean: clean
+	rm -f Makefile

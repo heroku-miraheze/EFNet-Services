@@ -1,0 +1,33 @@
+
+
+#
+# $Id: Makefile.in,v 1.2 2004/03/30 23:14:28 cbehrens Exp $
+#
+
+CC=gcc -Wall
+CFLAGS=-g -I. -I../../include -I../../../csconfig-1.0 -I../../../nnmatch-1.0 -I../admin
+CFLAGS.mod_jupes_r.o=-D_REENTRANT
+
+LFLAGS=-L.
+
+ALL=mod_jupes.so mod_jupes_r.so
+
+all:	${ALL}
+
+mod_jupes.so:	mod_jupes.o
+	ld -G -o $@ mod_jupes.o
+
+mod_jupes_r.so:	mod_jupes_r.o
+	ld -G -o $@ mod_jupes_r.o
+
+mod_jupes.o:		mod_jupes.c
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ -c mod_jupes.c
+
+mod_jupes_r.o:		mod_jupes.c
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ -c mod_jupes.c
+
+clean:
+	rm -f *.o *.a ${ALL}
+
+distclean:	clean
+	rm -f Makefile

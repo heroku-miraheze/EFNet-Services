@@ -1,0 +1,29 @@
+
+#
+# services main Makefile
+#
+# $Id: Makefile.in,v 1.1.1.1 2003/02/02 16:52:23 cbehrens Exp $
+#
+
+DAEMON=@daemon@
+MODULES=@moddirs@
+
+DIRS=${DAEMON} ${MODULES}
+
+all:
+	@for dir in ${DIRS} ; do						\
+		if test "x$$dir" = "xNONE" ; then			\
+			continue;								\
+		fi;											\
+		here=`pwd`;									\
+		cd $$dir && make ${MAKETAG} || exit;		\
+		cd $$here;									\
+	done;											\
+
+clean:
+	${MAKE} MAKETAG=clean
+
+distclean:	clean
+	${MAKE} MAKETAG=distclean
+	rm -f config.log config.cache config.status include/setup.h Makefile
+

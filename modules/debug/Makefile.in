@@ -1,0 +1,33 @@
+
+
+#
+# $Id: Makefile.in,v 1.2 2004/03/30 23:14:28 cbehrens Exp $
+#
+
+CC=gcc -Wall
+CFLAGS=-g -I. -I../../include -I../../../csconfig-1.0 -I../../../nnmatch-1.0
+CFLAGS.mod_debug_r.o=-D_REENTRANT
+
+LFLAGS=-L.
+
+ALL=mod_debug.so mod_debug_r.so
+
+all:	${ALL}
+
+mod_debug.so:	mod_debug.o
+	ld -G -o $@ mod_debug.o
+
+mod_debug_r.so:	mod_debug_r.o
+	ld -G -o $@ mod_debug_r.o
+
+mod_debug.o:		mod_debug.c
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ -c mod_debug.c
+
+mod_debug_r.o:		mod_debug.c
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ -c mod_debug.c
+
+clean:
+	rm -f *.o *.a ${ALL}
+
+distclean:	clean
+	rm -f Makefile

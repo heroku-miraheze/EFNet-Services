@@ -1,0 +1,109 @@
+
+AC_REVISION(1.0)
+AC_INIT(configure.in)
+AC_CONFIG_HEADER(include/setup.h:include/setup.h.in)
+
+AC_PROG_CC
+AC_PROG_CPP
+AC_AIX
+AC_ISC_POSIX
+AC_PROG_GCC_TRADITIONAL
+
+AC_C_INLINE
+
+if test "$GCC" = "yes"; then
+	CC="$CC -Wall"
+fi
+
+AC_CANONICAL_HOST
+
+AC_PATH_PROGS(ECHO, echo, NONE, /usr/ucb:$PATH)
+
+if test "x$ECHO" = "xNONE" ; then
+	ECHO=echo
+fi
+
+AC_MSG_CHECKING(if __attribute__ works)
+AC_TRY_RUN([
+#include <stdio.h>
+
+static char testing[] __attribute__ ((unused)) = "testing";
+
+main()
+{
+	exit(0);
+}
+],AC_DEFINE(HAVE_ATTRIBUTE) AC_MSG_RESULT(yes), AC_MSG_RESULT(no), :)
+
+LDFLAGS="-rdynamic $LDFLAGS"
+
+#case "$host_os" in
+#	linux*)
+#		LDFLAGS="-rdynamic $LDFLAGS"
+#	;;
+#esac
+
+AC_CHECK_HEADERS(crypt.h stropts.h time.h sys/time.h sys/ioctl.h sys/filio.h)
+
+AC_CHECK_LIB(crypt_i, crypt)
+if test "$LIBS" = ""; then
+	AC_CHECK_LIB(crypt, crypt)
+fi
+CRYPTLIB=$LIBS
+AC_SUBST(CRYPTLIB)
+LIBS=""
+AC_CHECK_LIB(socket, socket)
+AC_CHECK_LIB(nsl, inet_ntoa)
+AC_CHECK_LIB(dl, dlopen)
+
+AC_MSG_CHECKING([for the main daemon to compile...])
+if test -d "daemon" -a -r "daemon/Makefile.in" ; then
+	daemon="daemon";
+	makefiles="$makefiles daemon/Makefile"
+	$ECHO "daemon"
+else
+	$ECHO "no";
+	daemon="NONE"
+fi
+AC_SUBST(daemon)
+
+AC_MSG_CHECKING([for modules to compile...])
+if test -d "modules" ; then
+	for moddir in `echo modules/*` ; do
+		if test -d "$moddir" -a -r "$moddir/Makefile.in" ; then
+			$ECHO -n "$moddir "
+			moddirs="$moddir $moddirs"
+			makefiles="$makefiles $moddir/Makefile"
+		fi
+	done
+fi
+if test "x$moddirs" != "x" ; then
+	$ECHO
+else
+	$ECHO "none."
+	moddirs="NONE"
+fi
+AC_SUBST(moddirs)
+
+if test "x$moddirs" = "xNONE" -a "x$daemon" = "xNONE"; then
+	echo "No daemon or modules found to compile"
+	exit;
+fi
+
+AC_CHECK_FUNC(poll, AC_DEFINE(HAVE_POLL))
+AC_CHECK_FUNC(strerror, AC_DEFINE(HAVE_STRERROR), 
+	AC_MSG_CHECKING(for sys_errlist declaration)
+	AC_TRY_RUN([
+#include <sys/types.h>
+#include <stdio.h>
+#include <errno.h>
+main()
+{
+  char *s = sys_errlist[0];
+  exit(0);
+}
+],AC_DEFINE(SYS_ERRLIST_DECLARED) AC_MSG_RESULT(yes), AC_MSG_RESULT(no), :))
+
+AC_TYPE_SIGNAL()
+
+AC_OUTPUT(Makefile $makefiles)

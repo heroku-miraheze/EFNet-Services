@@ -1,0 +1,80 @@
+
+
+#
+# $Id: Makefile.in,v 1.3 2004/04/04 20:29:33 cbehrens Exp $
+#
+
+CC=gcc -Wall
+CFLAGS=-g -I. -I../../include -I../../../nnmatch-1.0
+CFLAGS.chanfixdb_r.o=-D_REENTRANT
+
+LFLAGS=-L. -lchanfixdb
+LFLAGS.chanfixdb_create=-L../../../nnmatch-1.0 -lnnmatch
+LFLAGS.chanfixdb_test=-L../../../nnmatch-1.0 -lnnmatch
+LFLAGS.chanfixdb_chandump=-L../../../nnmatch-1.0 -lnnmatch
+LFLAGS.chanfixdb_info=-L../../../nnmatch-1.0 -lnnmatch
+LFLAGS.chanfixdb_dump=-L../../../nnmatch-1.0 -lnnmatch
+LFLAGS.chanfixdb_import=-L../../../nnmatch-1.0 -lnnmatch
+LFLAGS.chanfixdb_repair=-L../../../nnmatch-1.0 -lnnmatch
+LFLAGS.chanfixdb_roll=-L../../../nnmatch-1.0 -lnnmatch
+LFLAGS.chanfixdb_sort=-L../../../nnmatch-1.0 -lnnmatch
+
+ALL=libchanfixdb.a chanfixdb.so libchanfixdb_r.a chanfixdb_r.so chanfixdb_create chanfixdb_test chanfixdb_chandump chanfixdb_info chanfixdb_dump chanfixdb_import chanfixdb_repair chanfixdb_roll chanfixdb_sort
+
+all:	${ALL}
+
+libchanfixdb.a:		chanfixdb.o
+	rm -f $@
+	ar r $@ chanfixdb.o
+	ranlib $@
+
+chanfixdb.so:	chanfixdb.o ../../../nnmatch-1.0/libnnmatch.a
+	ld -G -o $@ chanfixdb.o
+
+libchanfixdb_r.a:	chanfixdb_r.o
+	rm -f $@
+	ar r $@ chanfixdb_r.o
+	ranlib $@
+
+chanfixdb_r.so:	chanfixdb_r.o ../../../nnmatch-1.0/libnnmatch.a
+	ld -G -o $@ chanfixdb_r.o
+
+../../../nnmatch-1.0/libnnmatch.a:	../../../nnmatch-1.0/match.c ../../../nnmatch-1.0/match.h
+	cd ../../../nnmatch-1.0 && make
+
+chanfixdb.o:		chanfixdb.c chanfixdb.h
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ -c chanfixdb.c
+
+chanfixdb_r.o:		chanfixdb.c chanfixdb.h
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ -c chanfixdb.c
+
+chanfixdb_create:	chanfixdb_create.c libchanfixdb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ chanfixdb_create.c ${LFLAGS} ${LFLAGS.$@}
+chanfixdb_test:	chanfixdb_test.c libchanfixdb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ chanfixdb_test.c ${LFLAGS} ${LFLAGS.$@}
+chanfixdb_chandump:	chanfixdb_chandump.c libchanfixdb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ chanfixdb_chandump.c ${LFLAGS} ${LFLAGS.$@}
+
+chanfixdb_repair:	chanfixdb_repair.c libchanfixdb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ chanfixdb_repair.c ${LFLAGS} ${LFLAGS.$@}
+
+chanfixdb_roll:	chanfixdb_roll.c libchanfixdb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ chanfixdb_roll.c ${LFLAGS} ${LFLAGS.$@}
+
+chanfixdb_sort:	chanfixdb_sort.c libchanfixdb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ chanfixdb_sort.c ${LFLAGS} ${LFLAGS.$@}
+
+chanfixdb_info:	chanfixdb_info.c libchanfixdb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ chanfixdb_info.c ${LFLAGS} ${LFLAGS.$@}
+
+chanfixdb_dump:	chanfixdb_dump.c libchanfixdb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ chanfixdb_dump.c ${LFLAGS} ${LFLAGS.$@}
+
+chanfixdb_import:	chanfixdb_import.c libchanfixdb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ chanfixdb_import.c ${LFLAGS} ${LFLAGS.$@}
+
+clean:
+	rm -f *.o *.a ${ALL}
+
+distclean:	clean
+	rm -f Makefile

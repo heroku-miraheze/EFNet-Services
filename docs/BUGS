@@ -1,0 +1,31 @@
+
+$Id: BUGS,v 1.4 2004/04/04 20:14:54 cbehrens Exp $
+
+
+1) server doesn't always successfully connect to its uplink on the first try.
+   It seems it sends something to the uplink to cause the uplink to send back
+   ERROR, and the server disconnects and retries on next auto-conn interval.
+   Or...  something like that, anyway...
+
+2) Server likes to core more often when connected to hybrid/ratbox servers.
+
+3) server cores shortly after a server is unjuped?  or does it core because
+   of a reload of the config?
+
+4) Anyone with a login can unjupe a server.  There's no checks in the unjupe
+   code to make sure that 5 opers or 3 admins approve.  Also, it may be
+   possible to just /squit a jupe as well.  I see no flag being set on the
+   juped client struct to say it is a 'reconnecting' jupe.  Needs testing.
+
+5) kills sent from the chanjupe and uhjupe modules don't remove the client
+   from memory.  Those modules were meant as temporary solution against
+   drones, anyway.  They've not been voted in and they are certainly not
+   code-complete.
+
+6) Various things like /whois aren't finished. :)
+
+7) DBs are not portable between different endian type machines.
+
+
+Please report all bugs to bugs@codestud.com
+

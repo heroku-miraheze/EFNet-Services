@@ -1,0 +1,21 @@
+
+$Id: TODO,v 1.2 2004/03/30 22:44:45 cbehrens Exp $
+
+-- need to add hostname and maybe info len checks to clients that
+     get added from modules...
+
+-- chanfix callback changes modes of channels and clients, etc, but
+     no other modules get those changes via callbacks.  fix this..
+     maybe by forcing mode changes, etc, having to go thru module
+     functions.
+
+-- write real logging functions for the modules which will log
+     module name, then string.
+
+-- change command callback stuff to be able to return errors so
+     that the main parser can log the error with the full command
+     name, cached before the the command separates the args.
+
+-- admin module needs to be a login module, allowing other modules
+     to create flags to give to logins, etc...
+     admin status will be a flag.

@@ -1,0 +1,74 @@
+
+
+#
+# $Id: Makefile.in,v 1.4 2004/03/30 23:14:27 cbehrens Exp $
+#
+
+CC=gcc -Wall
+CFLAGS=-g -I. -I../../include -I../../../csconfig-1.0 -I../../../nnmatch-1.0
+CFLAGS.admindb_r.o=-D_REENTRANT
+
+LFLAGS=-L. -ladmindb -L../../../nnmatch-1.0 -lnnmatch
+LFLAGS.admindb_add=@CRYPTLIB@
+LFLAGS.admindb_setpasswd=@CRYPTLIB@
+
+UTILS=admindb_create admindb_info admindb_dump admindb_add admindb_del admindb_setpasswd admindb_setexpire admindb_lookup admindb_find admindb_import
+ALL=libadmindb.a admindb.so libadmindb_r.a admindb_r.so ${UTILS}
+
+all:	${ALL}
+
+libadmindb.a:		admindb.o
+	rm -f $@
+	ar r $@ admindb.o
+	ranlib $@
+
+admindb.so:	admindb.o
+	ld -G -o $@ admindb.o
+
+libadmindb_r.a:	admindb_r.o
+	rm -f $@
+	ar r $@ admindb_r.o
+	ranlib $@
+
+admindb_r.so:	admindb_r.o
+	ld -G -o $@ admindb_r.o
+
+../../../lib/nnmatch/libnnmatch.a:	../../../lib/nnmatch/match.c ../../../lib/nnmatch/match.h
+	cd ../../../lib/nnmatch && make
+
+admindb.o:		admindb.c admindb.h
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ -c admindb.c
+
+admindb_r.o:		admindb.c admindb.h
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ -c admindb.c
+
+admindb_create:   admindb_create.c libadmindb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ admindb_create.c ${LFLAGS} ${LFLAGS.$@}
+
+admindb_info: admindb_info.c libadmindb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ admindb_info.c ${LFLAGS} ${LFLAGS.$@}
+admindb_dump: admindb_dump.c libadmindb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ admindb_dump.c ${LFLAGS} ${LFLAGS.$@}
+admindb_import: admindb_import.c libadmindb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ admindb_import.c ${LFLAGS} ${LFLAGS.$@}
+admindb_add: admindb_add.c libadmindb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ admindb_add.c ${LFLAGS} ${LFLAGS.$@}
+
+admindb_del: admindb_del.c libadmindb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ admindb_del.c ${LFLAGS} ${LFLAGS.$@}
+admindb_setpasswd: admindb_setpasswd.c libadmindb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ admindb_setpasswd.c ${LFLAGS} ${LFLAGS.$@}
+admindb_setexpire: admindb_setexpire.c libadmindb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ admindb_setexpire.c ${LFLAGS} ${LFLAGS.$@}
+
+admindb_lookup: admindb_lookup.c libadmindb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ admindb_lookup.c ${LFLAGS} ${LFLAGS.$@}
+
+admindb_find: admindb_find.c libadmindb.a
+	${CC} ${CFLAGS} ${CFLAGS.$@} -o $@ admindb_find.c ${LFLAGS} ${LFLAGS.$@}
+
+clean:
+	rm -f *.o *.a ${ALL}
+
+distclean:	clean
+	rm -f Makefile

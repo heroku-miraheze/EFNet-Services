@@ -1,0 +1,42 @@
+
+
+#
+# $Id: Makefile.in,v 1.1.1.1 2003/02/02 16:52:24 cbehrens Exp $
+#
+
+CC=gcc -Wall -g
+CFLAGS=-I. -I../../include
+LFLAGS=-L.
+
+UTILS=
+LIBS=libcrc32.a crc32.so libcrc32_r.a crc32_r.so
+
+all: ${LIBS} ${UTILS}
+
+crc32_r.so:	crc32_r.o Makefile
+	ld -G -o $@ crc32_r.o
+
+libcrc32_r.a:	crc32_r.o Makefile
+	rm -f $@
+	ar r $@ crc32_r.o
+	ranlib $@
+
+crc32.so:	crc32_r.o Makefile
+	ld -G -o $@ crc32.o
+
+libcrc32.a:	crc32.o Makefile
+	rm -f $@
+	ar r $@ crc32.o
+	ranlib $@
+
+crc32.o:	crc32.c crc32.h Makefile
+	${CC} ${CFLAGS} -c -o $@ crc32.c
+
+crc32_r.o:	crc32.c crc32.h Makefile
+	${CC} ${CFLAGS} -D_REENTRANT -c -o $@ crc32.c
+
+clean:
+	rm -f *.o ${LIBS} ${UTILS}
+
+distclean:	clean
+	rm -f Makefile

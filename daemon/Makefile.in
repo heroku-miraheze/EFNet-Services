@@ -1,0 +1,63 @@
+
+#
+# $Id: Makefile.in,v 1.3 2004/03/30 23:13:55 cbehrens Exp $
+#
+
+CC=@CC@
+CFLAGS=-g -I../include -Iinclude -I../../csconfig-1.0 -I../../nnmatch-1.0
+#-DSIMEMPOOL_DEBUG
+#-DSIMEMPOOL_FNDEBUG
+#-DDEBUG
+LFLAGS.services=@LDFLAGS@ -L../../csconfig-1.0 -lcsconfig -L../../nnmatch-1.0 -lnnmatch @CRYPTLIB@ @LIBS@
+
+UTILS=
+ALL=services ${UTILS}
+
+SRCS=commands.c \
+	conf.c \
+	conn.c \
+	hash.c \
+	mempool.c \
+	module.c \
+	misc.c \
+	queue.c \
+	services.c \
+	timedcbs.c
+
+OBJS=${SRCS:%.c=%.o}
+
+.SUFFIXES:	.c .o
+
+.c.o:
+	${CC} ${CFLAGS} ${CFLAGS.$@} -c $< -o $@
+
+all:	${ALL}
+
+../../csconfig-1.0/libcsconfig.a:	../../csconfig-1.0/csconfig.c ../../csconfig-1.0/csconfig.h
+	cd ../../csconfig-1.0 && make
+
+../../nnmatch-1.0/libnnmatch.a: ../../nnmatch-1.0/match.c ../../nnmatch-1.0/match.h
+	cd ../../nnmatch-1.0 && make
+
+services:	${OBJS} ../../csconfig-1.0/libcsconfig.a ../../nnmatch-1.0/libnnmatch.a
+	${CC} ${OBJS} -o $@ ${LFLAGS} ${LFLAGS.$@}
+
+clean:
+	rm -f ${OBJS} ${ALL}
+
+distclean:	clean
+	rm -f config.cache config.log config.status include/setup.h Makefile
+
+
+commands.o:	commands.c ../include/services.h
+conf.o:	conf.c ../../csconfig-1.0/csconfig.h ../include/services.h
+conn.o:	conn.c ../include/services.h
+hash.o:	hash.c ../include/hash.h
+mempool.o:	mempool.c ../include/mempool.h
+misc.o:	misc.c ../include/misc.h
+module.o:	module.c ../include/module.h ../include/services.h
+queue.o:	queue.c ../include/services.h
+services.o:	services.c ../include/services.h ../include/hash.h
+timedcbs.o:	timedcbs.c ../include/timedcbs.h
+../include/hash.h:	../include/conn.h
+../include/conn.h:	../include/queue.h
